@@ -15,7 +15,8 @@ Page({
     phoneNumber: '',
     timer: {
       text: '健身签到'
-    }
+    },
+    status: 0
   },
   // 页面加载函数
   onLoad: function () {
@@ -210,7 +211,7 @@ Page({
       request: (param) => {
         return new Promise(function (resolve, reject) {
           wx.request({
-            url: 'https://www.ecartoon.com.cn/clubmp!sign.asp',
+            url: app.request_url + 'sign.asp',
             data: {
               json: encodeURI(JSON.stringify(param))
             },
@@ -223,7 +224,7 @@ Page({
       getServerTime: function () {
         return new Promise(function (resolve, reject) {
           wx.request({
-            url: 'https://www.ecartoon.com.cn/clubmp!getSignTime.asp',
+            url: app.request_url + 'getSignTime.asp',
             data: {
               memberId: wx.getStorageSync('memberId'),
               clubId: wx.getStorageSync('clubId')
@@ -277,6 +278,22 @@ Page({
       });
       return;
     }
+
+    if (this.data.status != 0) {
+      return;
+    }
+
+    this.setData({
+      status: 1
+    });
+
+    var obj = this;
+    setTimeout(function () {
+      obj.setData({
+        status: 0
+      });
+    }, 1000);
+
     // 签到逻辑
     const sign = async () => {
       var obj = this;
